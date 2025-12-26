@@ -1,16 +1,19 @@
+
 import smtplib
+import os
 from email.mime.text import MIMEText
 
-EMAIL_ID = "apjcinfotech@gmail.com"
-EMAIL_PASS = "lbxcymotamcuhdvj"   # new app password podunga
+# ✅ Render / Local ENV variables
+EMAIL_ID = os.environ.get("apjcinfotech@gmail.com")
+EMAIL_PASS = os.environ.get("lbxcymotamcuhdvj")
 
 def send_email(to_email, message):
+    if not EMAIL_ID or not EMAIL_PASS:
+        raise Exception("Email credentials not set in environment variables")
+
     try:
-        print("Connecting SMTP...")
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
-
-        print("Logging in...")
         server.login(EMAIL_ID, EMAIL_PASS)
 
         msg = MIMEText(message)
@@ -21,10 +24,8 @@ def send_email(to_email, message):
         server.sendmail(EMAIL_ID, to_email, msg.as_string())
         server.quit()
 
-        print("Mail sent to:", to_email)
         return True
 
     except Exception as e:
-        print("ERROR sending to:", to_email)
-        print(e)
+        print("ERROR sending mail:", e)
         return False
